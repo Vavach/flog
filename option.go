@@ -169,8 +169,8 @@ func ParseSplitBy(splitBy int) (int, error) {
 
 // ParseSplitBy validates the given split-by
 func ParseMessageSize(messageSize uint) (uint, error) {
-	if messageSize < 0 {
-		return 0, errors.New("Message size can not be negative")
+	if messageSize == 0 {
+		return 0, errors.New("message size can not be zero")
 	}
 	return messageSize, nil
 }
