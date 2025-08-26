@@ -35,6 +35,7 @@ func NewApacheCommonLog(t time.Time) string {
 		gofakeit.HTTPMethod(),
 		RandResourceURI(),
 		RandHTTPVersion(),
+		RandTextLog(),
 		gofakeit.StatusCode(),
 		gofakeit.Number(0, 30000),
 	)
@@ -50,6 +51,7 @@ func NewApacheCombinedLog(t time.Time) string {
 		gofakeit.HTTPMethod(),
 		RandResourceURI(),
 		RandHTTPVersion(),
+		RandTextLog(),
 		gofakeit.StatusCode(),
 		gofakeit.Number(30, 100000),
 		gofakeit.URL(),
@@ -111,6 +113,7 @@ func NewCommonLogFormat(t time.Time) string {
 		gofakeit.HTTPMethod(),
 		RandResourceURI(),
 		RandHTTPVersion(),
+		RandTextLog(),
 		gofakeit.StatusCode(),
 		gofakeit.Number(0, 30000),
 	)
@@ -126,6 +129,7 @@ func NewJSONLogFormat(t time.Time) string {
 		gofakeit.HTTPMethod(),
 		RandResourceURI(),
 		RandHTTPVersion(),
+		RandTextLog(),
 		gofakeit.StatusCode(),
 		gofakeit.Number(0, 30000),
 		gofakeit.URL(),
