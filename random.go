@@ -31,7 +31,6 @@ func RandHTTPVersion() string {
 	return versions[rand.Intn(3)]
 }
 
-func RandTextLog() string {
-
+func RandTextLog(messageSize uint) string {
 	return "fdfdfdf"
 }

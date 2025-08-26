@@ -43,6 +43,7 @@ Options:
                            with "byte" option, the logs will be split whenever the maximum size in bytes is reached.
   -w, --overwrite          overwrite the existing log files.
   -l, --loop               loop output forever until killed.
+  -m, --msize        	   size of message field in log. (in bytes)
 `
 
 var validFormats = []string{"apache_common", "apache_combined", "apache_error", "rfc3164", "rfc5424", "common_log", "json"}
@@ -50,16 +51,17 @@ var validTypes = []string{"stdout", "log", "gz"}
 
 // Option defines log generator options
 type Option struct {
-	Format    string
-	Output    string
-	Type      string
-	Number    int
-	Bytes     int
-	Sleep     time.Duration
-	Delay     time.Duration
-	SplitBy   int
-	Overwrite bool
-	Forever   bool
+	Format      string
+	Output      string
+	Type        string
+	Number      int
+	Bytes       int
+	Sleep       time.Duration
+	Delay       time.Duration
+	SplitBy     int
+	Overwrite   bool
+	Forever     bool
+	MessageSize uint
 }
 
 func init() {
@@ -81,16 +83,17 @@ func errorExit(err error) {
 
 func defaultOptions() *Option {
 	return &Option{
-		Format:    "apache_common",
-		Output:    "generated.log",
-		Type:      "stdout",
-		Number:    1000,
-		Bytes:     0,
-		Sleep:     0.0,
-		Delay:     0.0,
-		SplitBy:   0,
-		Overwrite: false,
-		Forever:   false,
+		Format:      "apache_common",
+		Output:      "generated.log",
+		Type:        "stdout",
+		Number:      1000,
+		Bytes:       0,
+		Sleep:       0.0,
+		Delay:       0.0,
+		SplitBy:     0,
+		Overwrite:   false,
+		Forever:     false,
+		MessageSize: 0,
 	}
 }
 
@@ -164,6 +167,14 @@ func ParseSplitBy(splitBy int) (int, error) {
 	return splitBy, nil
 }
 
+// ParseSplitBy validates the given split-by
+func ParseMessageSize(messageSize uint) (uint, error) {
+	if messageSize < 0 {
+		return 0, errors.New("Message size can not be negative")
+	}
+	return messageSize, nil
+}
+
 // ParseOptions parses given parameters from command line
 func ParseOptions() *Option {
 	var err error
@@ -182,6 +193,7 @@ func ParseOptions() *Option {
 	splitBy := pflag.IntP("split", "p", opts.SplitBy, "Maximum number of lines or size of a log file")
 	overwrite := pflag.BoolP("overwrite", "w", false, "Overwrite the existing log files")
 	forever := pflag.BoolP("loop", "l", false, "Loop output forever until killed")
+	messageSize := pflag.UintP("msize", "m", opts.MessageSize, "Size of message field in log. (in bytes)")
 
 	pflag.Parse()
 
@@ -214,6 +226,10 @@ func ParseOptions() *Option {
 	if opts.SplitBy, err = ParseSplitBy(*splitBy); err != nil {
 		errorExit(err)
 	}
+	if opts.MessageSize, err = ParseMessageSize(*messageSize); err != nil {
+		errorExit(err)
+	}
+
 	opts.Output = *output
 	opts.Overwrite = *overwrite
 	opts.Forever = *forever
