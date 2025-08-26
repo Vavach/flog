@@ -22,7 +22,7 @@ const (
 	// CommonLogFormat : {host} {user-identifier} {auth-user-id} [{datetime}] "{method} {request} {protocol}" {response-code} {bytes}
 	CommonLogFormat = "%s - %s [%s] \"%s %s %s\" %d %d"
 	// JSONLogFormat : {"host": "{host}", "user-identifier": "{user-identifier}", "datetime": "{datetime}", "method": "{method}", "request": "{request}", "protocol": "{protocol}", "status", {status}, "bytes": {bytes}, "referer": "{referer}"}
-	JSONLogFormat = `{"host":"%s", "user-identifier":"%s", "datetime":"%s", "method": "%s", "request": "%s", "protocol":"%s", "status":%d, "bytes":%d, "referer": "%s"}`
+	JSONLogFormat = `{"host":"%s", "user-identifier":"%s", "datetime":"%s", "method": "%s", "request": "%s", "protocol":"%s", "message: "%s", "status":%d, "bytes":%d, "referer": "%s"}`
 )
 
 // NewApacheCommonLog creates a log string with apache common log format
@@ -120,7 +120,7 @@ func NewCommonLogFormat(t time.Time) string {
 }
 
 // NewJSONLogFormat creates a log string with json log format
-func NewJSONLogFormat(t time.Time) string {
+func NewJSONLogFormat(t time.Time, option *Option) string {
 	return fmt.Sprintf(
 		JSONLogFormat,
 		gofakeit.IPv4Address(),
@@ -129,7 +129,7 @@ func NewJSONLogFormat(t time.Time) string {
 		gofakeit.HTTPMethod(),
 		RandResourceURI(),
 		RandHTTPVersion(),
-		RandTextLog(),
+		RandTextLog(option.MessageSize),
 		gofakeit.StatusCode(),
 		gofakeit.Number(0, 30000),
 		gofakeit.URL(),
